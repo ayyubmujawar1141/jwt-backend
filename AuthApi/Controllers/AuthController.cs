@@ -29,5 +29,15 @@ public class AuthController : ControllerBase
         if (!result.Success) return BadRequest(result);
         return Ok(result);
     }
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordDto request)
+    {
+        return Ok(new
+        {
+            Message=
+            "Hey chacha kya re!"
+        });
+
+    }
 
 }
