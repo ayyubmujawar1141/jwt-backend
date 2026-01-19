@@ -10,7 +10,8 @@ public static class DependencyInjection
         #region Services Configuration
 
         services.AddScoped<IUsersService, UserService>();
-
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwtService, JwtService>();
         #endregion
 
         return services;

@@ -13,7 +13,7 @@ public class UsersController : ControllerBase
     {
         _usersService = usersService;
     }
-
+    [HttpGet("get-all")]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _usersService.GetUsers());
