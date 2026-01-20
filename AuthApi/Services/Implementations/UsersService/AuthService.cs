@@ -4,6 +4,7 @@ using AuthApi.Dtos.RequestDtos.Auths;
 using AuthApi.Dtos.ResponseDtos.Auths;
 using AuthApi.Dtos.ResponseDtos.Users;
 using AuthApi.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace AuthApi.Services.Implementations.UsersService;
 
@@ -11,11 +12,13 @@ public class AuthService : IAuthService
 {
     private readonly IUsersRepository _usersRepository;
     private readonly IJwtService _jwtService;
+    private readonly IEmailService _emailService;
 
-    public AuthService(IUsersRepository usersRepository, IJwtService jwtService)
+    public AuthService(IUsersRepository usersRepository, IJwtService jwtService, IEmailService emailService)
     {
         _usersRepository = usersRepository;
         _jwtService = jwtService;
+        _emailService = emailService;
     }
     public async Task<SignupResponseDto> Signup(SignupRequestDto request)
     {
@@ -99,5 +102,16 @@ public class AuthService : IAuthService
                 Name = user.Name
             }
         };
+    }
+
+    public async Task<bool> ForgotPassword(ForgotPasswordDto request)
+    {
+
+        string resetLink = "";
+        string subject = "Reset your password";
+        var emailSent = await _emailService.SendEmailAsync(request.Email,subject,resetLink);
+        if (emailSent)
+            return true;
+        return false;
     }
 }

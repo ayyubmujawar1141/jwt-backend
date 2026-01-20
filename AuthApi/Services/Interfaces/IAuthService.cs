@@ -7,4 +7,5 @@ public interface IAuthService
 {
     Task<SignupResponseDto> Signup(SignupRequestDto request);
     Task<LoginResponseDto> Login(LoginRequestDto request);
+    Task<bool> ForgotPassword(ForgotPasswordDto request);
 }

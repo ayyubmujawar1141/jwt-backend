@@ -32,11 +32,14 @@ public class AuthController : ControllerBase
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordDto request)
     {
+        string email = request.Email;
+        var result = await _authService.ForgotPassword(request);
         return Ok(new
         {
             Message=
             "Hey chacha kya re!"
         });
+        return null;
 
     }
 
