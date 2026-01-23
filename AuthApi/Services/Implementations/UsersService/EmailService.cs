@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using AuthApi.Services.Interfaces;
 using AuthApi.Settings;
 using MailKit.Net.Smtp;
@@ -15,28 +16,28 @@ public class EmailService : IEmailService
     {
         _settings = options.Value;
     }
-    public async Task<bool> SendEmailAsync(string toEmail, string subject, string resetLink)
+    
+    
+    
+    public async Task<bool> SendEmailAsync(string toEmail, string otp)
     {
+        //Generate the OTP
+       
         //Create a email message
         var email = new MimeMessage();
         email.From.Add(new MailboxAddress(_settings.SenderName,_settings.SenderEmail));
         email.To.Add(new MailboxAddress("Recipient name",toEmail));
-        email.Subject = subject;
-        // You can send plain text or HTML body
-        resetLink = "https://youtu.be/UJHN0ONDnrs?si=iD1yNilD3CD0ZwSl";
-        string body = $@"
-            <h2>I am the CEO of Ubuntu Distro and also talented and skilled .Net Developer.</h2>
-            <p>Click below to see Ubuntu features:</p>
-               <a href='{resetLink}' style='padding:10px 15px;background:#0000FF;color:#fff;text-decoration:none;border-radius:6px;'>
-                Download Ubuntu
-            </a>
-              <p>if you are having questions like </p>
-              <p>why Ubuntu instead of Windows? because</p>
-              <p><b>IT IS FUCKING LIGHTWEIGHT, BITCH!</b></p>
-                
-              ";
+        email.Subject = "Your OTP Code";
+        
+        email.Body = new TextPart("html")
+        {
+            Text = $"<b>Your OTP is:</b> {otp}<br/><br/>This OTP will expire in 5 minutes."
+        };
 
-        email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+
+        // You can send plain text or HTML body
+        // 3. Compose and send the email
+        
         // 2. Send the email using SmtpClient
         using (var client = new SmtpClient())
         {

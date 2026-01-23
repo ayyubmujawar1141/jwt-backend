@@ -8,10 +8,12 @@ namespace AuthApi.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IOtpService _otpService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IOtpService otpService)
     {
         _authService = authService;
+        _otpService = otpService;
     }
     [HttpPost("signup")]
     public async Task<IActionResult> Signup([FromBody] SignupRequestDto request)
@@ -29,18 +31,18 @@ public class AuthController : ControllerBase
         if (!result.Success) return BadRequest(result);
         return Ok(result);
     }
-    [HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordDto request)
-    {
-        string email = request.Email;
-        var result = await _authService.ForgotPassword(request);
-        return Ok(new
-        {
-            Message=
-            "Hey chacha kya re!"
-        });
-        return null;
 
+    [HttpPost("send")]
+    public async Task<IActionResult> SendOtp([FromBody] SendOtpRequestDto request)
+    {
+        var result = await _otpService.SendOtpAsync(request);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 
+    [HttpPost("verify")]
+    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestDto requestDto)
+    {
+        var result = await _otpService.VerifyOtpAsync(requestDto);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
 }

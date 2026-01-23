@@ -104,14 +104,5 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<bool> ForgotPassword(ForgotPasswordDto request)
-    {
 
-        string resetLink = "";
-        string subject = "Reset your password";
-        var emailSent = await _emailService.SendEmailAsync(request.Email,subject,resetLink);
-        if (emailSent)
-            return true;
-        return false;
-    }
 }

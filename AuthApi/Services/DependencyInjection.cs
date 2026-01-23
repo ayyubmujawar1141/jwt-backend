@@ -1,3 +1,4 @@
+using AuthApi.Data.Repositories.Interfaces;
 using AuthApi.Services.Implementations.UsersService;
 using AuthApi.Services.Interfaces;
 using AuthApi.Settings;
@@ -17,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<IUsersService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IOtpService, OtpService>();
         services.AddScoped<IEmailService, EmailService>();
         #endregion
 

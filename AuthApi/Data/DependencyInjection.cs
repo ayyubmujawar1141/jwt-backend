@@ -16,6 +16,7 @@ public static class DependencyInjection
         #region Repositoy Configuration
 
         services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddScoped<IEmailOtpRepository, EmailOtpRepository>();
         #endregion
 
        
