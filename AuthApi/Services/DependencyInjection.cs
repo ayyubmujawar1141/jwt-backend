@@ -10,7 +10,10 @@ public static class DependencyInjection
     {
         #region Services Configuration
 
-        services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+        services.AddOptions<EmailSettings>().BindConfiguration("EmailSettings")
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+        // services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
         services.AddScoped<IUsersService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtService, JwtService>();
