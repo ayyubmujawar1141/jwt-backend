@@ -12,35 +12,46 @@ public class OtpService : IOtpService
 {
     private readonly IEmailOtpRepository _otpRepo;
     private readonly IEmailService _emailService;
+    private readonly IUsersRepository _usersRepository;
     
-    public OtpService(IEmailOtpRepository otpRepo, IEmailService emailService)
+    public OtpService(IEmailOtpRepository otpRepo, IEmailService emailService,  IUsersRepository usersRepository)
     {
         _otpRepo = otpRepo;
         _emailService = emailService;
+        _usersRepository = usersRepository;
     }
 
     public async Task<BasicResponseDto> SendOtpAsync(SendOtpRequestDto requestDto)
     {
         if (string.IsNullOrWhiteSpace(requestDto.Email))
             return new BasicResponseDto { Success = false, Message = "Email is required" };
-        var otp = GenerateOtp();
-        var otpHash = Sha256Hash(otp);
-
-        var otpEntity = new EmailOtp
+        var result = await _usersRepository.GetByEmail(requestDto.Email);
+        if (result!=null)
         {
-            Email = requestDto.Email,
-            OtpHash = otpHash,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(5),
-            IsUsed = false,
-            CreatedAt = DateTime.UtcNow
+            var otp = GenerateOtp();
+            var otpHash = Sha256Hash(otp);
 
-        };
-        await _otpRepo.AddOtpAsync(otpEntity);
-        await _otpRepo.SaveChangesAsync();
+            var otpEntity = new EmailOtp
+            {
+                Email = requestDto.Email,
+                OtpHash = otpHash,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(5),
+                IsUsed = false,
+                CreatedAt = DateTime.UtcNow
 
-        await _emailService.SendEmailAsync(requestDto.Email, otp);
+            };
+            await _otpRepo.AddOtpAsync(otpEntity);
+            await _otpRepo.SaveChangesAsync();
 
-        return new BasicResponseDto { Success = true, Message = "OTP Sent Successfully" };
+            await _emailService.SendEmailAsync(requestDto.Email, otp);
+
+            return new BasicResponseDto { Success = true, Message = "OTP Sent Successfully" };
+        }
+        else
+        {
+            return new BasicResponseDto { Success = false, Message = "Email never exists" };
+        }
+        
     }
 
     public async Task<BasicResponseDto> VerifyOtpAsync(VerifyOtpRequestDto requestDto)
@@ -73,7 +84,7 @@ public class OtpService : IOtpService
 
     private string GenerateOtp()
     {
-        return RandomNumberGenerator.GetInt32(10000, 999999).ToString();
+        return RandomNumberGenerator.GetInt32(100000, 999999).ToString();
     }
 
     private string Sha256Hash(string input)

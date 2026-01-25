@@ -26,6 +26,8 @@ public class EmailOtpRepository : IEmailOtpRepository
             .FirstOrDefaultAsync();
     }
 
+   
+
     public async Task SaveChangesAsync()
     {
         await _dbContext.SaveChangesAsync();
